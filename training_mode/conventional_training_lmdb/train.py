@@ -103,7 +103,7 @@ def train(conf):
     """Total training procedure.
     """
     data_loader = DataLoader(LMDBDataset(conf.lmdb_path, conf.dict_path),
-                             conf.batch_size, True, num_workers = 4)
+                             conf.batch_size, True, num_workers = 1)
     conf.device = torch.device('cuda:0')
     criterion = torch.nn.CrossEntropyLoss().cuda(conf.device)
     backbone_factory = BackboneFactory(conf.backbone_type, conf.backbone_conf_file)    
