@@ -10,6 +10,9 @@ import cv2
 import torch
 import numpy as np
 from torch.utils.data import Dataset
+import lmdb
+import pickle
+import random
 
 def transform(image):
     """ Transform a image by cv2.
@@ -74,6 +77,35 @@ class ImageDataset(Dataset):
         image = (image.transpose((2, 0, 1)) - 127.5) * 0.0078125
         image = torch.from_numpy(image.astype(np.float32))
         return image, image_label
+
+class LMDBDataset(Dataset):
+    def __init__(self, lmdb_path, dict_path):
+        self.lmdb_path = lmdb_path
+        self.dict_path = dict_path
+        with open(self.dict_path, 'rb') as f:
+            self.dict_file = pickle.load(f)
+
+    def __len__(self):
+        return len(self.dict_file)
+
+    def __getitem__(self, index):
+        env = lmdb.open(self.lmdb_path)
+        txn = env.begin()
+        images = pickle.loads(txn.get(str(index).encode()))
+        num_image = len(images)
+        image_id = random.sample(range(num_image), 1)[0]
+        image_byte = images[image_id]
+        image_nparr = np.frombuffer(image_byte, np.uint8)
+        image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
+        if random.random() > 0.5:
+            image = cv2.flip(image, 1)
+        if image.ndim == 2:
+            image = image[:, :, np.newaxis]
+        image = (image.transpose((2, 0, 1)) - 127.5) * 0.0078125
+        image = torch.from_numpy(image.astype(np.float32))
+        image_label = str(index)
+        return image, image_label
+
 
 class ImageDataset_SST(Dataset):
     def __init__(self, data_root, train_file, exclude_id_set):
