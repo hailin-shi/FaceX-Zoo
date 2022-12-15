@@ -89,7 +89,7 @@ class LMDBDataset(Dataset):
         return len(self.dict_file)
 
     def __getitem__(self, index):
-        env = lmdb.open(self.lmdb_path)
+        env = lmdb.open(self.lmdb_path, lock=False)
         txn = env.begin()
         images = pickle.loads(txn.get(str(index).encode()))
         env.close()
