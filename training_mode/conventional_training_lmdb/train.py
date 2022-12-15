@@ -16,7 +16,7 @@ from tensorboardX import SummaryWriter
 
 sys.path.append('../../')
 from utils.AverageMeter import AverageMeter
-from data_processor.train_dataset import ImageDataset
+from data_processor.train_dataset import LMDBDataset
 from backbone.backbone_def import BackboneFactory
 from head.head_def import HeadFactory
 
@@ -102,7 +102,7 @@ def train_one_epoch(data_loader, model, optimizer, criterion, cur_epoch, loss_me
 def train(conf):
     """Total training procedure.
     """
-    data_loader = DataLoader(ImageDataset(conf.data_root, conf.train_file), 
+    data_loader = DataLoader(LMDBDataset(conf.lmdb_path, conf.dict_path),
                              conf.batch_size, True, num_workers = 4)
     conf.device = torch.device('cuda:0')
     criterion = torch.nn.CrossEntropyLoss().cuda(conf.device)
@@ -129,9 +129,9 @@ def train(conf):
 
 if __name__ == '__main__':
     conf = argparse.ArgumentParser(description='traditional_training for face recognition.')
-    conf.add_argument("--data_root", type = str, 
+    conf.add_argument("--lmdb_path", type = str,
                       help = "The root folder of training set.")
-    conf.add_argument("--train_file", type = str,  
+    conf.add_argument("--dict_path", type = str,
                       help = "The training file path.")
     conf.add_argument("--backbone_type", type = str, 
                       help = "Mobilefacenets, Resnet.")

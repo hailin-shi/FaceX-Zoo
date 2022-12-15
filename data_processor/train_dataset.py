@@ -92,6 +92,7 @@ class LMDBDataset(Dataset):
         env = lmdb.open(self.lmdb_path)
         txn = env.begin()
         images = pickle.loads(txn.get(str(index).encode()))
+        env.close()
         num_image = len(images)
         image_id = random.sample(range(num_image), 1)[0]
         image_byte = images[image_id]
@@ -103,7 +104,7 @@ class LMDBDataset(Dataset):
             image = image[:, :, np.newaxis]
         image = (image.transpose((2, 0, 1)) - 127.5) * 0.0078125
         image = torch.from_numpy(image.astype(np.float32))
-        image_label = str(index)
+        image_label = int(index)
         return image, image_label
 
 
