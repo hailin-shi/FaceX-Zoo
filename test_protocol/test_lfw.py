@@ -38,7 +38,7 @@ if __name__ == '__main__':
     args = conf.parse_args()
     # parse config.
     with open(args.data_conf_file) as f:
-        data_conf = yaml.load(f)[args.test_set]
+        data_conf = yaml.load(f, Loader=yaml.FullLoader)[args.test_set]
         pairs_file_path = data_conf['pairs_file_path']
         cropped_face_folder = data_conf['cropped_face_folder']
         image_list_file_path = data_conf['image_list_file_path']
