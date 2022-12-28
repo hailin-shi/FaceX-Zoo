@@ -46,7 +46,7 @@ if __name__ == '__main__':
     pairs_parser_factory = PairsParserFactory(pairs_file_path, args.test_set)
     # define dataloader
     data_loader = DataLoader(CommonTestDataset(cropped_face_folder, image_list_file_path, False), 
-                             batch_size=args.batch_size, num_workers=4, shuffle=False)
+                             batch_size=args.batch_size, num_workers=1, shuffle=False)
     #model def
     backbone_factory = BackboneFactory(args.backbone_type, args.backbone_conf_file)
     model_loader = ModelLoader(backbone_factory)

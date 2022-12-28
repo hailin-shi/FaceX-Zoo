@@ -42,6 +42,8 @@ def show_curve(log_path, loss_name):
 if __name__ == "__main__":
     log_path = sys.argv[1]
     loss_name = sys.argv[2]
+    cwd = os.getcwd()
+    log_path = os.path.join(cwd, log_path)
 
     show_curve(log_path, loss_name)
 
